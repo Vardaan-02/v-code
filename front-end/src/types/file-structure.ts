@@ -22,9 +22,18 @@ export interface FileTreeContextType {
   setSelectedNode: (node: FileNode | null) => void
   expandedNodes: Set<string>
   toggleExpanded: (nodeId: string) => void
-  createFolder: (parentPath: string, name: string) => Promise<void>
-  createFile: (parentPath: string, name: string) => Promise<void>
-  renameNode: (node: FileNode, newName: string) => Promise<void>
-  deleteNode: (node: FileNode) => Promise<void>
-  refreshTree: () => Promise<void>
+}
+
+export interface AddS3ObjectPayload {
+  path: string;
+  type: "file" | "folder";
+}
+
+export interface RenameS3ObjectPayload {
+  name: string;
+  path: string;
+}
+
+export interface DeleteS3ObjectPayload {
+  path: string;
 }

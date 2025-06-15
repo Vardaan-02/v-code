@@ -1,18 +1,28 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { ChevronRight, ChevronDown, File, Folder, FolderOpen, MoreHorizontal, Plus, Edit, Trash2 } from "lucide-react"
-import type { FileNode } from "@/types/file-structure"
-import { useFileTree } from "@/contexts/file-tree-context"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { useState } from "react";
+import {
+  ChevronRight,
+  ChevronDown,
+  File,
+  Folder,
+  FolderOpen,
+  MoreHorizontal,
+  Plus,
+  Edit,
+  Trash2,
+} from "lucide-react";
+import type { FileNode } from "@/types/file-structure";
+import { useFileTree } from "@/contexts/file-tree-context";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,72 +32,78 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
-import { cn } from "@/lib/utils"
+} from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { cn } from "@/lib/utils";
+import { useAddS3Object } from "@/hooks/useAddS3Object";
+import { useRenameS3Object } from "@/hooks/useRenameS3Object";
+import { useDeleteS3Object } from "@/hooks/useDeleteS3Object";
 
 interface FileTreeNodeProps {
-  node: FileNode
-  level: number
+  node: FileNode;
+  level: number;
 }
 
 export function FileTreeNode({ node, level }: FileTreeNodeProps) {
-  const {
-    selectedNode,
-    setSelectedNode,
-    expandedNodes,
-    toggleExpanded,
-    createFolder,
-    createFile,
-    renameNode,
-    deleteNode,
-  } = useFileTree()
+  const { selectedNode, setSelectedNode, expandedNodes, toggleExpanded } =
+    useFileTree();
 
-  const [isRenaming, setIsRenaming] = useState(false)
-  const [renameValue, setRenameValue] = useState(node.name)
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
-  const [showCreateDialog, setShowCreateDialog] = useState(false)
-  const [createType, setCreateType] = useState<"file" | "folder">("file")
-  const [createName, setCreateName] = useState("")
+  const [isRenaming, setIsRenaming] = useState(false);
+  const [renameValue, setRenameValue] = useState(node.name);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const [createType, setCreateType] = useState<"file" | "folder">("file");
+  const [createName, setCreateName] = useState("");
 
-  const isExpanded = expandedNodes.has(node.id)
-  const isSelected = selectedNode?.id === node.id
-  const hasChildren = node.children && node.children.length > 0
+  const isExpanded = expandedNodes.has(node.id);
+  const isSelected = selectedNode?.id === node.id;
+  const hasChildren = node.children && node.children.length > 0;
+
+  const { mutate: addS3Object, isPending: addingS3Object } = useAddS3Object();
+  const { mutate: renameS3Object } = useRenameS3Object();
+  const { mutate: deleteS3Object } = useDeleteS3Object();
 
   const handleToggleExpand = () => {
     if (node.type === "folder") {
-      toggleExpanded(node.id)
+      toggleExpanded(node.id);
     }
-  }
+  };
 
   const handleSelect = () => {
-    setSelectedNode(node)
-  }
+    setSelectedNode(node);
+  };
 
-  const handleRename = async () => {
+  const handleRename = async (path: string) => {
     if (renameValue.trim() && renameValue !== node.name) {
-      await renameNode(node, renameValue.trim())
+      renameS3Object({ path, name: renameValue });
     }
-    setIsRenaming(false)
-    setRenameValue(node.name)
-  }
+    setIsRenaming(false);
+    setRenameValue(node.name);
+  };
 
-  const handleDelete = async () => {
-    await deleteNode(node)
-    setShowDeleteDialog(false)
-  }
+  const handleDelete = async (path: string) => {
+    deleteS3Object({path});
+    setShowDeleteDialog(false);
+  };
 
-  const handleCreate = async () => {
+  const handleCreate = async (path: string) => {
     if (createName.trim()) {
+      path = path + "/" + createName;
       if (createType === "folder") {
-        await createFolder(node.path, createName.trim())
+        addS3Object({ path, type: "folder" });
       } else {
-        await createFile(node.path, createName.trim())
+        addS3Object({ path, type: "file" });
       }
     }
-    setShowCreateDialog(false)
-    setCreateName("")
-  }
+    setShowCreateDialog(false);
+    setCreateName("");
+  };
 
   return (
     <div className="select-none">
@@ -95,7 +111,7 @@ export function FileTreeNode({ node, level }: FileTreeNodeProps) {
         className={cn(
           "flex items-center gap-1 py-1 px-2 hover:bg-accent hover:text-accent-foreground rounded-sm cursor-pointer group",
           isSelected && "bg-accent text-accent-foreground",
-          "transition-colors duration-150",
+          "transition-colors duration-150"
         )}
         style={{ paddingLeft: `${level * 12 + 8}px` }}
         onClick={handleSelect}
@@ -107,11 +123,15 @@ export function FileTreeNode({ node, level }: FileTreeNodeProps) {
             size="sm"
             className="h-4 w-4 p-0 hover:bg-transparent"
             onClick={(e) => {
-              e.stopPropagation()
-              handleToggleExpand()
+              e.stopPropagation();
+              handleToggleExpand();
             }}
           >
-            {isExpanded ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
+            {isExpanded ? (
+              <ChevronDown className="h-3 w-3" />
+            ) : (
+              <ChevronRight className="h-3 w-3" />
+            )}
           </Button>
         )}
 
@@ -134,13 +154,13 @@ export function FileTreeNode({ node, level }: FileTreeNodeProps) {
             <Input
               value={renameValue}
               onChange={(e) => setRenameValue(e.target.value)}
-              onBlur={handleRename}
+              onBlur={() => handleRename(node.path)}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
-                  handleRename()
+                  handleRename(node.path);
                 } else if (e.key === "Escape") {
-                  setIsRenaming(false)
-                  setRenameValue(node.name)
+                  setIsRenaming(false);
+                  setRenameValue(node.name);
                 }
               }}
               className="h-6 text-sm"
@@ -169,8 +189,8 @@ export function FileTreeNode({ node, level }: FileTreeNodeProps) {
               <>
                 <DropdownMenuItem
                   onClick={() => {
-                    setCreateType("folder")
-                    setShowCreateDialog(true)
+                    setCreateType("folder");
+                    setShowCreateDialog(true);
                   }}
                 >
                   <Plus className="h-4 w-4 mr-2" />
@@ -178,8 +198,8 @@ export function FileTreeNode({ node, level }: FileTreeNodeProps) {
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => {
-                    setCreateType("file")
-                    setShowCreateDialog(true)
+                    setCreateType("file");
+                    setShowCreateDialog(true);
                   }}
                 >
                   <Plus className="h-4 w-4 mr-2" />
@@ -219,14 +239,15 @@ export function FileTreeNode({ node, level }: FileTreeNodeProps) {
             <AlertDialogTitle>Delete {node.type}</AlertDialogTitle>
             <AlertDialogDescription>
               Are you sure you want to delete "{node.name}"?
-              {node.type === "folder" && " This will delete all contents of the folder."}
+              {node.type === "folder" &&
+                " This will delete all contents of the folder."}
               This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
-              onClick={handleDelete}
+              onClick={()=>handleDelete(node.path)}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               Delete
@@ -239,7 +260,9 @@ export function FileTreeNode({ node, level }: FileTreeNodeProps) {
       <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Create New {createType === "folder" ? "Folder" : "File"}</DialogTitle>
+            <DialogTitle>
+              Create New {createType === "folder" ? "Folder" : "File"}
+            </DialogTitle>
           </DialogHeader>
           <div className="py-4">
             <Input
@@ -248,21 +271,27 @@ export function FileTreeNode({ node, level }: FileTreeNodeProps) {
               onChange={(e) => setCreateName(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
-                  handleCreate()
+                  handleCreate(node.path);
                 }
               }}
             />
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowCreateDialog(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setShowCreateDialog(false)}
+            >
               Cancel
             </Button>
-            <Button onClick={handleCreate} disabled={!createName.trim()}>
+            <Button
+              onClick={() => handleCreate(node.path)}
+              disabled={addingS3Object}
+            >
               Create
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }

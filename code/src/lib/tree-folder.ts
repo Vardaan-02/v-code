@@ -1,62 +1,58 @@
 import { FileNode } from "../types/file-structure";
 import { S3Object } from "../types/s3object";
 
-export function parseS3ObjectsToTree(objects: S3Object[]): FileNode[] {
-  const root: { [key: string]: FileNode } = {};
+export function parseS3ObjectToTree(objects: S3Object[]): FileNode[] {
+  const root: Record<string, FileNode> = {};
 
-  objects.forEach((obj) => {
-    if (!obj.key) return;
+  for (const obj of objects) {
+    if (!obj.key) continue; 
 
     const parts = obj.key.split("/").filter(Boolean);
     let currentLevel = root;
-    let currentPath = "";
+    let fullPath = "";
 
-    for (let i = 0; i < parts.length; i++) {
-      const part = parts[i];
-      const isFile = i === parts.length - 1;
-      currentPath = currentPath ? `${currentPath}/${part}` : part;
+    parts.forEach((part, index) => {
+      const isLast = index === parts.length - 1;
+      const isFolder = obj.key.endsWith("/") && isLast;
+      const isFile = !obj.key.endsWith("/") && isLast;
+
+      fullPath += (index === 0 ? "" : "/") + part;
 
       if (!currentLevel[part]) {
         const newNode: FileNode = {
-          id: currentPath,
+          id: fullPath,
           name: part,
-          path: currentPath,
+          path: fullPath,
           type: isFile ? "file" : "folder",
-          children: isFile ? undefined : [],
-          size: isFile ? obj.size : undefined,
-          lastModified: isFile ? obj.lastModified : undefined,
           isExpanded: false,
-          childrenMap: isFile ? undefined : {},
         };
+
+        if (isFile) {
+          newNode.size = obj.size;
+          newNode.lastModified = new Date(obj.lastModified as Date);
+        } else {
+          newNode.children = [];
+          newNode.childrenMap = {};
+        }
 
         currentLevel[part] = newNode;
       }
 
       if (!isFile) {
-        if (!currentLevel[part].childrenMap) {
-          currentLevel[part].childrenMap = {};
-        }
         currentLevel = currentLevel[part].childrenMap!;
       }
-    }
-  });
+    });
+  }
 
-  const convertToChildrenArray = (nodeMap: {
-    [key: string]: FileNode;
-  }): FileNode[] => {
-    return Object.values(nodeMap)
-      .map((node) => {
-        if (node.type === "folder" && node.childrenMap) {
-          node.children = convertToChildrenArray(node.childrenMap);
-          delete node.childrenMap;
-        }
-        return node;
-      })
-      .sort((a, b) => {
-        if (a.type !== b.type) return a.type === "folder" ? -1 : 1;
-        return a.name.localeCompare(b.name);
-      });
-  };
+  const normalize = (nodeMap: Record<string, FileNode>): FileNode[] =>
+    Object.values(nodeMap).map((node) => {
+      if (node.type === "folder" && node.childrenMap) {
+        const normalizedChildren = normalize(node.childrenMap);
+        node.children = normalizedChildren;
+        delete node.childrenMap;
+      }
+      return node;
+    });
 
-  return convertToChildrenArray(root);
+  return normalize(root);
 }

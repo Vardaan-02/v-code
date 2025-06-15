@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
 import { s3 } from "../../lib/s3-service";
 import dotenv from "dotenv";
-import { parseS3ObjectsToTree } from "../../lib/tree-folder";
+import { parseS3ObjectToTree } from "../../lib/tree-folder";
 import { S3Object } from "../../types/s3object";
 
 dotenv.config();
 
-export async function getFolderStructure(req: Request, res: Response) {
+export default async function getFolderStructureTree(req: Request, res: Response) {
   const bucket = process.env.AWS_BUCKET_NAME!;
   const prefix = "users/Vardaan02/VCode";
 
@@ -34,7 +34,7 @@ export async function getFolderStructure(req: Request, res: Response) {
         };
     });
 
-    const tree_structure = parseS3ObjectsToTree(final as S3Object[]);
+    const tree_structure = parseS3ObjectToTree(final as S3Object[]);
 
     res.json(tree_structure);
   } catch (err) {
