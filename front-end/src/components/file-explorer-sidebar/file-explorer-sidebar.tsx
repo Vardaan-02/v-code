@@ -2,7 +2,6 @@
 
 import { RefreshCw, Plus, FolderPlus, FilePlus } from "lucide-react";
 import { useFileTree } from "@/contexts/file-tree-context";
-import { FileTreeNode } from "@/components/code-area/file-node-tree";
 import { Button } from "@/components/ui/button";
 import {
   Sidebar,
@@ -29,6 +28,7 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { useRefreshFolderStructure } from "@/hooks/useRefreshFolderStructure";
 import { useAddS3Object } from "@/hooks/useAddS3Object";
+import { FileTreeNode } from "./file-node-tree";
 
 export function FileExplorerSidebar() {
   const { tree } = useFileTree();
