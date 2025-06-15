@@ -7,7 +7,7 @@ export default async function addS3Object(req: Request, res: Response) {
   const { name } = project;
   const { path, type } = req.body;
 
-  if (!path || !type) {
+  if (!type) {
     res.status(400).json({ message: "Path and type are required." });
     return;
   }

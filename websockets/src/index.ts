@@ -57,12 +57,12 @@ io.on("connection", (socket: Socket) => {
     socket.emit("load-file", data);
   });
 
-  socket.on("send-delta", ({path,delta}) => {
+  socket.on("send-delta", ({ path, delta }) => {
     socket.broadcast.to(path).emit("receive-delta", delta);
   });
 
-  socket.on("save-file", async ({path, content}) => {
-    // await saveFile(path, content);
+  socket.on("save-file", async ({ path, content }) => {
+    await saveFile(path, content);
   });
 });
 

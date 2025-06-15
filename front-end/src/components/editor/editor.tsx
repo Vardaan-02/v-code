@@ -3,7 +3,6 @@ import useMonacoLanguages from "@/hooks/useMonocoLanguages";
 import { useEditor } from "@/hooks/useEditor";
 import { useSocket } from "@/hooks/useSockets";
 import { useFileTree } from "@/contexts/file-tree-context";
-import { useEffect } from "react";
 import { cn } from "@/lib/utils";
 
 export default function CodeEditor() {
@@ -11,10 +10,6 @@ export default function CodeEditor() {
   const socket = useSocket();
   const { selectedNode, selectingNode } = useFileTree();
   const { handleMount, code } = useEditor(socket, selectedNode);
-
-  useEffect(() => {
-    console.log(selectingNode);
-  }, [selectingNode]);
 
   return (
     <div className="w-full h-full">

@@ -10,7 +10,7 @@ export default async function editFileData(req: Request, res: Response) {
   const { name } = project;
   const { path, content } = req.body;
 
-  if (!path || !content) {
+  if (!path) {
     res.status(400).json({ message: "Missing path or content" });
     return;
   }

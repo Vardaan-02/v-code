@@ -41,7 +41,11 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-import { useAddS3Object, useDeleteS3Object, useRenameS3Object } from "@/hooks/useS3Object";
+import {
+  useAddS3Object,
+  useDeleteS3Object,
+  useRenameS3Object,
+} from "@/hooks/useS3Object";
 
 interface FileTreeNodeProps {
   node: FileNode;
@@ -85,8 +89,12 @@ export function FileTreeNode({ node, level }: FileTreeNodeProps) {
     setRenameValue(node.name);
   };
 
-  const handleDelete = async (path: string) => {
-    deleteS3Object({path});
+  const handleDelete = async (path: string, type: "file" | "folder") => {
+    if (createType === "folder") {
+      deleteS3Object({ path, type });
+    } else {
+      deleteS3Object({ path, type });
+    }
     setShowDeleteDialog(false);
   };
 
@@ -245,7 +253,7 @@ export function FileTreeNode({ node, level }: FileTreeNodeProps) {
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
-              onClick={()=>handleDelete(node.path)}
+              onClick={() => handleDelete(node.path, node.type)}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               Delete

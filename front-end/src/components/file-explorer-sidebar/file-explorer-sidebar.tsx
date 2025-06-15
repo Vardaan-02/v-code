@@ -40,13 +40,12 @@ export function FileExplorerSidebar() {
     useRefreshFolderStructure();
   const { mutate: addS3Object, isPending: addingS3Object } = useAddS3Object();
 
-  const handleCreate = async (e: React.KeyboardEvent<HTMLInputElement>) => {
-    console.log(e);
+  const handleCreate = async (name: string) => {
     if (createName.trim()) {
       if (createType === "folder") {
-        addS3Object({ path: "", type: "folder" });
+        addS3Object({ path: name, type: "folder" });
       } else {
-        addS3Object({ path: "", type: "file" });
+        addS3Object({ path: name, type: "file" });
       }
     }
     setShowCreateDialog(false);
@@ -146,7 +145,7 @@ export function FileExplorerSidebar() {
               onChange={(e) => setCreateName(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
-                  handleCreate(e);
+                  handleCreate(createName);
                 }
               }}
             />
@@ -158,7 +157,10 @@ export function FileExplorerSidebar() {
             >
               Cancel
             </Button>
-            <Button onClick={() => handleCreate} disabled={addingS3Object}>
+            <Button
+              onClick={() => handleCreate(createName)}
+              disabled={addingS3Object}
+            >
               Create
             </Button>
           </DialogFooter>

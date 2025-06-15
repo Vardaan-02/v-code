@@ -38,4 +38,5 @@ export interface RenameS3ObjectPayload {
 
 export interface DeleteS3ObjectPayload {
   path: string;
+  type: "file" | "folder";
 }

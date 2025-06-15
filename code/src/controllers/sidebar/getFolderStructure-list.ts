@@ -1,8 +1,6 @@
 import { Request, Response } from "express";
 import { s3 } from "../../lib/s3-service";
 import dotenv from "dotenv";
-import { parseS3ObjectsToTree } from "../../lib/tree-folder";
-import { S3Object } from "../../types/s3object";
 
 dotenv.config();
 
