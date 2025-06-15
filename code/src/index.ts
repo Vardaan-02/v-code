@@ -17,6 +17,9 @@ app.use(express.json());
 import sidebarRoutes from "./routes/sidebar.routes";
 app.use("/api/sidebar", sidebarRoutes);
 
+import editorRoutes from "./routes/code-editor.routes";
+app.use("/api/editor", editorRoutes);
+
 app.listen(PORT, () => {
   console.log(`✅ Server is running at http://localhost:${PORT}`);
 });

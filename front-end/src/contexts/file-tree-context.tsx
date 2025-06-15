@@ -32,6 +32,7 @@ export function FileTreeProvider({
   const [tree, setTree] = useState<FileNode[]>(initialPaths);
   const [selectedNode, setSelectedNode] = useState<FileNode | null>(null);
   const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set());
+  const [selectingNode, setSelectingNode] = useState<boolean>(false);
 
   useEffect(() => {
     setTree(initialPaths);
@@ -56,6 +57,8 @@ export function FileTreeProvider({
     setSelectedNode,
     expandedNodes,
     toggleExpanded,
+    selectingNode,
+    setSelectingNode,
   };
 
   return (

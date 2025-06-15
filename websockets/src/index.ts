@@ -2,6 +2,7 @@ import express from "express";
 import http from "http";
 import { Server, Socket } from "socket.io";
 import dotenv from "dotenv";
+import axios from "axios";
 
 dotenv.config();
 
@@ -16,20 +17,52 @@ const io = new Server(server, {
   },
 });
 
-const docs: Record<string, any> = {};
+async function loadFile(path: string) {
+  const response = await axios.get(
+    `http://localhost:3001/api/editor/get-file-data`,
+    {
+      params: {
+        path: path,
+      },
+    }
+  );
+
+  return response.data.content;
+}
+
+export async function saveFile(path: string, content: string) {
+  try {
+    const response = await axios.post(
+      `http://localhost:3001/api/editor/edit-file-data`,
+      {
+        path,
+        content,
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("❌ Error saving file:", error);
+    throw error;
+  }
+}
 
 io.on("connection", (socket: Socket) => {
   console.log(`Socket connected: ${socket.id}`);
 
-  socket.on("get-file", (path) => {
-    const data = "";
+  socket.on("get-file", async (path) => {
+    const data = await loadFile(path);
     socket.join(path);
 
     socket.emit("load-file", data);
+  });
 
-    socket.on("send-delta", (delta) => {
-      socket.broadcast.to(path).emit("receive-delta", delta);
-    });
+  socket.on("send-delta", ({path,delta}) => {
+    socket.broadcast.to(path).emit("receive-delta", delta);
+  });
+
+  socket.on("save-file", async ({path, content}) => {
+    // await saveFile(path, content);
   });
 });
 

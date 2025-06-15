@@ -3,12 +3,18 @@ import useMonacoLanguages from "@/hooks/useMonocoLanguages";
 import { useEditor } from "@/hooks/useEditor";
 import { useSocket } from "@/hooks/useSockets";
 import { useFileTree } from "@/contexts/file-tree-context";
+import { useEffect } from "react";
+import { cn } from "@/lib/utils";
 
 export default function CodeEditor() {
   useMonacoLanguages();
   const socket = useSocket();
-  const { selectedNode } = useFileTree();
+  const { selectedNode, selectingNode } = useFileTree();
   const { handleMount, code } = useEditor(socket, selectedNode);
+
+  useEffect(() => {
+    console.log(selectingNode);
+  }, [selectingNode]);
 
   return (
     <div className="w-full h-full">
@@ -23,22 +29,42 @@ export default function CodeEditor() {
             </p>
           </div>
         ) : (
-          <Editor
-            width="100%"
-            height="100%"
-            language="javascript"
-            theme="vs-dark"
-            value={code}
-            onMount={handleMount}
-            options={{
-              fontSize: 14,
-              minimap: { enabled: false },
-              wordWrap: "on",
-              scrollBeyondLastLine: false,
-              automaticLayout: true,
-              tabSize: 4,
-            }}
-          />
+          <div className="relative w-full h-full">
+            <div
+              className={cn(
+                "absolute top-0 left-0 z-10 w-full h-full bg-[#1e1e1e] hidden",
+                selectingNode && "block"
+              )}
+            >
+              <div className="flex h-full w-full items-center justify-center">
+                <div className="flex flex-col items-center gap-2 animate-fade-in">
+                  <div className="h-6 w-6 border-4 border-white border-t-transparent rounded-full animate-spin" />
+                  <span className="text-white text-sm font-medium">
+                    Loading...
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="h-full">
+              <Editor
+                width="100%"
+                height="100%"
+                language="javascript"
+                theme="vs-dark"
+                value={code}
+                onMount={handleMount}
+                options={{
+                  fontSize: 14,
+                  minimap: { enabled: false },
+                  wordWrap: "on",
+                  scrollBeyondLastLine: false,
+                  automaticLayout: true,
+                  tabSize: 4,
+                }}
+              />
+            </div>
+          </div>
         )}
       </div>
     </div>
