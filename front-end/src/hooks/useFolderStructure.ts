@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getFolderStructure } from "@/api/file-explorer-sidebar/get-folder-structure";
 
 export const useFolderStructure = () => {
@@ -10,4 +10,13 @@ export const useFolderStructure = () => {
   });
 };
 
+export const useRefreshFolderStructure = () => {
+  const queryClient = useQueryClient();
 
+  return useMutation({
+    mutationFn: getFolderStructure,
+    onSuccess: (data) => {
+      queryClient.setQueryData(["folder-structure"], data);
+    },
+  });
+};

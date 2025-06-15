@@ -26,9 +26,9 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { useRefreshFolderStructure } from "@/hooks/useRefreshFolderStructure";
-import { useAddS3Object } from "@/hooks/useAddS3Object";
+import { useAddS3Object } from "@/hooks/useS3Object";
 import { FileTreeNode } from "./file-node-tree";
+import { useRefreshFolderStructure } from "@/hooks/useFolderStructure";
 
 export function FileExplorerSidebar() {
   const { tree } = useFileTree();

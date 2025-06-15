@@ -41,9 +41,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-import { useAddS3Object } from "@/hooks/useAddS3Object";
-import { useRenameS3Object } from "@/hooks/useRenameS3Object";
-import { useDeleteS3Object } from "@/hooks/useDeleteS3Object";
+import { useAddS3Object, useDeleteS3Object, useRenameS3Object } from "@/hooks/useS3Object";
 
 interface FileTreeNodeProps {
   node: FileNode;
