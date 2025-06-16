@@ -1,0 +1,14 @@
+# Prevent node_modules from being sent in build context (we run npm ci inside Docker anyway)
+node_modules
+
+# Output from build (we generate this in the container)
+dist
+
+# Editor junk
+.vscode
+.idea
+*.log
+
+# OS trash
+.DS_Store
+Thumbs.db

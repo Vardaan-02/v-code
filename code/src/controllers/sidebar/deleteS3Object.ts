@@ -58,9 +58,8 @@ export default async function deleteS3Object(req: Request, res: Response) {
         .listObjectsV2({ Bucket: bucket, Prefix: finalPrefix })
         .promise();
       if (!listedObjects.Contents || listedObjects.Contents.length === 0) {
-        return res
-          .status(404)
-          .json({ message: "No objects found under folder" });
+        res.status(404).json({ message: "No objects found under folder" });
+        return;
       }
       const deleteParams = {
         Bucket: bucket,

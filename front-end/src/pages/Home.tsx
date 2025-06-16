@@ -25,6 +25,8 @@ import {
   ChevronRight,
   Cpu,
 } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Toaster } from "@/components/ui/sonner";
 
 export default function LandingPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -36,7 +38,7 @@ export default function LandingPage() {
 
   const terminalCommands = useMemo(
     () => [
-      "$ npm create codecollab-app my-project",
+      "$ npm create V-Code-app my-project",
       "$ cd my-project",
       "$ npm run dev",
       "✨ Server running on http://localhost:3000",
@@ -183,7 +185,7 @@ export default function LandingPage() {
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg blur opacity-50 animate-pulse" />
               </div>
               <span className="text-xl font-bold bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
-                CodeCollab
+                V-Code
               </span>
             </div>
 
@@ -207,15 +209,19 @@ export default function LandingPage() {
               >
                 Contact
               </a>
-              <Button
-                variant="outline"
-                className="mr-2 hover:scale-105 transition-transform"
-              >
-                Sign In
-              </Button>
-              <Button className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl">
-                Get Started
-              </Button>
+              <Link to={"/sign-in"} className="cursor-pointer">
+                <Button
+                  variant="outline"
+                  className="mr-2 hover:scale-105 transition-transform cursor-pointer"
+                >
+                  Sign In
+                </Button>
+              </Link>
+              <Link to={"/register"} className="cursor-pointer">
+                <Button className="cursor-pointer bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl">
+                  Get Started
+                </Button>
+              </Link>
             </nav>
 
             {/* Mobile Menu Button */}
@@ -254,10 +260,15 @@ export default function LandingPage() {
                   Contact
                 </a>
                 <div className="flex flex-col space-y-2 pt-4">
-                  <Button variant="outline">Sign In</Button>
-                  <Button className="bg-gradient-to-r from-blue-500 to-purple-500">
-                    Get Started
-                  </Button>
+                  <Link to={"/sign-in"} className="cursor-pointer">
+                    <Button variant="outline">Sign In</Button>
+                  </Link>
+
+                  <Link to={"/register"} className="cursor-pointer">
+                    <Button className="bg-gradient-to-r from-blue-500 to-purple-500">
+                      Get Started
+                    </Button>
+                  </Link>
                 </div>
               </nav>
             </div>
@@ -296,13 +307,15 @@ export default function LandingPage() {
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <Button
-                    size="lg"
-                    className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-lg px-8 py-4 group shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
-                  >
-                    Start Coding Now
-                    <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                  </Button>
+                  <Link to={"/code"}>
+                    <Button
+                      size="lg"
+                      className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-lg px-8 py-4 group shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                    >
+                      Start Coding Now
+                      <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                    </Button>
+                  </Link>
                   <Button
                     size="lg"
                     variant="outline"
@@ -581,6 +594,7 @@ export default function LandingPage() {
                 >
                   Schedule Demo
                 </Button>
+                <Toaster />
               </div>
             </div>
           </div>
@@ -599,7 +613,7 @@ export default function LandingPage() {
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg blur opacity-50" />
               </div>
               <span className="text-xl font-bold bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
-                CodeCollab
+                V-Code
               </span>
             </div>
 
@@ -620,7 +634,7 @@ export default function LandingPage() {
           </div>
 
           <div className="mt-8 pt-8 border-t border-border/50 text-center text-muted-foreground">
-            <p>&copy; 2024 CodeCollab. All rights reserved.</p>
+            <p>&copy; 2024 V-Code. All rights reserved.</p>
           </div>
         </div>
       </footer>

@@ -48,6 +48,9 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  --gradient-start:oklch(0.7642 0.1934 142.38);
+  --gradient-to:oklch(0.7393 0.2033 249.86);
+  --gradient-via:oklch(0.6623 0.2566 291.95);
 }
 
 @media (prefers-color-scheme: light) {

@@ -8,7 +8,8 @@ export default async function addS3Object(req: Request, res: Response) {
   const { path, type, content } = req.body;
 
   if (!path || !type) {
-    return res.status(400).json({ message: "Path and type are required." });
+    res.status(400).json({ message: "Path and type are required." });
+    return;
   }
 
   const finalPath = `users/${username}/${name}/${path}`;
@@ -25,13 +26,15 @@ export default async function addS3Object(req: Request, res: Response) {
   s3.putObject(params, (err, data) => {
     if (err) {
       console.error("❌ Error uploading to S3:", err);
-      return res.status(500).json({ message: "Failed to upload", error: err });
+      res.status(500).json({ message: "Failed to upload", error: err });
+      return;
     }
 
-    return res.status(200).json({
+    res.status(200).json({
       message: `${type} created successfully ✅`,
       key,
       data,
     });
+    return;
   });
 }
