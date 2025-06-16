@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosBackendClient = axios.create({
-  baseURL: import.meta.env.VITE_DOCKER_BACKEND!,
+  baseURL: import.meta.env.VITE_API_BASE_URL!,
   withCredentials: true, 
   headers: {
     "Content-Type": "application/json",

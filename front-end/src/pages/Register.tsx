@@ -10,7 +10,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -53,7 +52,6 @@ export default function SignupPage() {
       email: "",
       password: "",
       confirmPassword: "",
-      acceptTerms: false,
     },
   });
 
@@ -348,45 +346,6 @@ export default function SignupPage() {
                       </FormItem>
                     )}
                   />
-
-                  <FormField
-                    control={form.control}
-                    name="acceptTerms"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                        <FormControl>
-                          <Checkbox
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                          />
-                        </FormControl>
-                        <div className="space-y-1 leading-none">
-                          <FormLabel className="text-sm text-muted-foreground cursor-pointer leading-relaxed">
-                            I agree to the{" "}
-                            <Link
-                              to="/terms"
-                              className="text-primary hover:text-primary/80 transition-colors"
-                            >
-                              <p className="text-primary hover:text-primary/80 transition-colors">
-                                Terms of Service
-                              </p>
-                            </Link>{" "}
-                            and{" "}
-                            <Link
-                              to="/privacy"
-                              className="text-primary hover:text-primary/80 transition-colors"
-                            >
-                              <p className="text-primary hover:text-primary/80 transition-colors">
-                                Privacy Policy
-                              </p>
-                            </Link>
-                          </FormLabel>
-                          <FormMessage />
-                        </div>
-                      </FormItem>
-                    )}
-                  />
-
                   <Button
                     type="submit"
                     className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 transition-all duration-300 hover:scale-[1.02] shadow-lg hover:shadow-xl group"

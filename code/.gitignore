@@ -38,3 +38,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Ignore all of drizzle/
+drizzle/
+
+# But keep the actual migration SQLs
+!drizzle/*.sql

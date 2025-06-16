@@ -33,7 +33,7 @@ import {
   CheckCircle,
   AlertCircle,
 } from "lucide-react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import {
   resetPasswordSchema,
   type ResetPasswordFormValues,
@@ -46,7 +46,9 @@ import {
 import { useResetPassword } from "@/hooks/useAuth";
 
 export default function ResetPasswordPage() {
-  const { token } = useParams<{ token: string }>();
+const [searchParams] = useSearchParams();
+const token = searchParams.get("token");
+
 
   const {
     mutateAsync,
@@ -328,6 +330,7 @@ export default function ResetPasswordPage() {
                 </CardContent>
 
                 <CardFooter>
+                  <Link to={"/sign-in"} className="flex w-full">
                   <Button
                     asChild
                     className="w-full bg-gradient-to-r from-blue-500 to-emerald-500 hover:from-blue-600 hover:to-emerald-600 transition-all duration-300 hover:scale-[1.02] shadow-lg hover:shadow-xl"
@@ -339,6 +342,7 @@ export default function ResetPasswordPage() {
                       </div>
                     </div>
                   </Button>
+                  </Link>
                 </CardFooter>
               </>
             )}

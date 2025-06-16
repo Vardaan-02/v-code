@@ -1,14 +1,14 @@
 import axios from "axios";
 
-const axiosS3Client = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL!,
+const axiosDockerClient = axios.create({
+  baseURL: import.meta.env.VITE_DOCKER_BACKEND!,
   withCredentials: true, 
   headers: {
     "Content-Type": "application/json",
   },
 });
 
-axiosS3Client.interceptors.request.use((config) => {
+axiosDockerClient.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -16,4 +16,4 @@ axiosS3Client.interceptors.request.use((config) => {
   return config;
 });
 
-export default axiosS3Client;
+export default axiosDockerClient;

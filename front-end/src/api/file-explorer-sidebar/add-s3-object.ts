@@ -1,18 +1,15 @@
 import axiosBackendClient from "@/lib/axios-backend-client";
-import axiosS3Client from "@/lib/axios-s3-client";
+import axiosDockerClient from "@/lib/axios-docker-client";
 import type { AddS3ObjectPayload } from "@/types/file-structure";
 
 export const addS3Object = async (payload: AddS3ObjectPayload) => {
   try {
-    const s3Response = await axiosS3Client.post("/sidebar/add-s3-object", payload);
-    const backendResponse = await axiosBackendClient.post("/folder-structure/add-file-folder", payload);
-
-    console.log("📦 S3 Response:", s3Response.data);
-    console.log("🗂️ Backend Response:", backendResponse.data);
+    const backendResponse = await axiosBackendClient.post("/sidebar/add-s3-object", payload);
+    const dockerResponse = await axiosDockerClient.post("/folder-structure/add-file-folder", payload);
 
     return {
-      s3: s3Response.data,
-      backend: backendResponse.data,
+      s3: backendResponse.data,
+      backend: dockerResponse.data,
     };
   } catch (error) {
     console.error("❌ Failed to add object to S3 or backend:", error);

@@ -18,7 +18,7 @@ const AppRouter = () => {
         <Route path="/register" element={<SignupPage />} />
         <Route path="/sign-in" element={<LoginPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-        <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
       </Routes>
     </BrowserRouter>
   );

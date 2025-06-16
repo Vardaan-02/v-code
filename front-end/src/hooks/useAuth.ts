@@ -4,6 +4,7 @@ import { register } from "@/api/auth/register";
 import { resetPassword } from "@/api/auth/reset-password";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 export const useRegister = () => {
@@ -11,10 +12,13 @@ export const useRegister = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState(0);
 
+  const navigate = useNavigate();
+
   const { mutateAsync, isPending, error } = useMutation({
     mutationFn: register,
     onSuccess: () => {
       toast.success("Registeration Completed");
+      navigate("/sign-in");
     },
     onError: (error) => {
       console.error("❌ Failed to Register", error);
@@ -37,10 +41,13 @@ export const useRegister = () => {
 export const useLogin = () => {
   const [showPassword, setShowPassword] = useState(false);
 
+  const navigate = useNavigate();
+
   const { mutateAsync, isPending, error } = useMutation({
     mutationFn: login,
     onSuccess: () => {
       toast.success("Welcome Back");
+      navigate("/code");
     },
     onError: (error) => {
       console.error("❌ Failed to Login", error);
