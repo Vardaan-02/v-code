@@ -54,12 +54,15 @@ export function useTerminal(
     const addFileFolder = async ({
       path,
       type,
+      content
     }: {
       path: string;
       type: "file" | "folder";
+      content:string;
     }) => {
       const finalpath = path.replace(/^.*s3-code\//, "");
-      await addS3Object({ path: finalpath, type });
+      console.log(content);
+      await addS3Object({ path: finalpath, type,content });
     };
 
     socketDocker.on("docker:add", addFileFolder);

@@ -1,25 +1,36 @@
 import express from "express";
-import dotenv from "dotenv";
+import http from "http";
+import { Server, Socket } from "socket.io";
 import cors from "cors";
-
-dotenv.config();
+import { PORT, CLIENT_ORIGIN } from "./config";
+import routes from "./routes";
+import { handleFileSockets } from "./sockets/file-handler";
 
 const app = express();
-const PORT = process.env.PORT || 3001;
 
-app.use(cors({
-  origin: process.env.CLIENT_ORIGIN , 
-  credentials: true, 
-}));
-
+app.use(cors({ origin: CLIENT_ORIGIN, credentials: true }));
 app.use(express.json());
+app.use("/api", routes);
 
-import sidebarRoutes from "./routes/sidebar.routes";
-app.use("/api/sidebar", sidebarRoutes);
+const server = http.createServer(app);
 
-import editorRoutes from "./routes/code-editor.routes";
-app.use("/api/editor", editorRoutes);
+const io = new Server(server, {
+  cors: {
+    origin: CLIENT_ORIGIN,
+    credentials: true,
+  },
+});
 
-app.listen(PORT, () => {
-  console.log(`✅ Server is running at http://localhost:${PORT}`);
+io.on("connection", (socket: Socket) => {
+  console.log(`⚡️ Socket connected: ${socket.id}`);
+
+  handleFileSockets(io, socket);
+
+  socket.on("disconnect", () => {
+    console.log(`🚪 Socket disconnected: ${socket.id}`);
+  });
+});
+
+server.listen(PORT, () => {
+  console.log(`✅ REST + WebSocket server running at http://localhost:${PORT}`);
 });

@@ -30,6 +30,7 @@ export interface FileTreeContextType {
 export interface AddS3ObjectPayload {
   path: string;
   type: "file" | "folder";
+  content?: string;
 }
 
 export interface RenameS3ObjectPayload {
