@@ -1,7 +1,6 @@
-// src/lib/axios.ts
 import axios from "axios";
 
-const axiosClient = axios.create({
+const axiosS3Client = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL!,
   withCredentials: true, 
   headers: {
@@ -9,7 +8,7 @@ const axiosClient = axios.create({
   },
 });
 
-axiosClient.interceptors.request.use((config) => {
+axiosS3Client.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -17,4 +16,4 @@ axiosClient.interceptors.request.use((config) => {
   return config;
 });
 
-export default axiosClient;
+export default axiosS3Client;

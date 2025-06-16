@@ -121,7 +121,7 @@ export function FileExplorerSidebar() {
               ) : (
                 <div className="space-y-1">
                   {tree.map((node) => (
-                    <FileTreeNode key={node.id} node={node} level={0} />
+                    <FileTreeNode key={node.path} node={node} level={0} />
                   ))}
                 </div>
               )}

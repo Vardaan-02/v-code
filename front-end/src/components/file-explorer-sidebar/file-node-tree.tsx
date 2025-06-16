@@ -63,17 +63,17 @@ export function FileTreeNode({ node, level }: FileTreeNodeProps) {
   const [createType, setCreateType] = useState<"file" | "folder">("file");
   const [createName, setCreateName] = useState("");
 
-  const isExpanded = expandedNodes.has(node.id);
-  const isSelected = selectedNode?.id === node.id;
+  const isExpanded = expandedNodes.has(node.path);
+  const isSelected = selectedNode?.path === node.path;
   const hasChildren = node.children && node.children.length > 0;
 
-  const { mutate: addS3Object, isPending: addingS3Object } = useAddS3Object();
-  const { mutate: renameS3Object } = useRenameS3Object();
-  const { mutate: deleteS3Object } = useDeleteS3Object();
+  const { mutateAsync: addS3Object, isPending: addingS3Object } = useAddS3Object();
+  const { mutateAsync: renameS3Object } = useRenameS3Object();
+  const { mutateAsync: deleteS3Object } = useDeleteS3Object();
 
   const handleToggleExpand = () => {
     if (node.type === "folder") {
-      toggleExpanded(node.id);
+      toggleExpanded(node.path);
     }
   };
 
@@ -233,7 +233,7 @@ export function FileTreeNode({ node, level }: FileTreeNodeProps) {
       {node.type === "folder" && isExpanded && hasChildren && (
         <div>
           {node.children!.map((child) => (
-            <FileTreeNode key={child.id} node={child} level={level + 1} />
+            <FileTreeNode key={child.path} node={child} level={level + 1} />
           ))}
         </div>
       )}

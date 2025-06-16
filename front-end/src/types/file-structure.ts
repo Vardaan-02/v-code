@@ -1,11 +1,10 @@
+import type { Socket } from "socket.io-client";
+
 export interface FileNode {
-  id: string;
   name: string;
   path: string;
   type: "file" | "folder";
   children?: FileNode[];
-  size?: number;
-  lastModified?: Date;
   isExpanded?: boolean;
 }
 
@@ -24,6 +23,8 @@ export interface FileTreeContextType {
   toggleExpanded: (nodeId: string) => void;
   selectingNode: boolean;
   setSelectingNode: (value: boolean) => void;
+  socketS3: Socket | null;
+  socketDocker: Socket | null;
 }
 
 export interface AddS3ObjectPayload {

@@ -1,23 +1,25 @@
+import "./config/env";
 import express from "express";
-import dotenv from "dotenv";
-import cors from "cors";
+import http from "http";
+import { Server } from "socket.io";
+import { corsConfig } from "./config/server";
+import { setupSockets } from "./sockets";
+import { setupFileWatcher } from "./watchers/file-watcher";
 
-dotenv.config();
+import FileStructureRouter from "./routes/file-tree";
 
 const app = express();
-const PORT = process.env.PORT || 3000;
-
-app.use(cors({
-  origin: process.env.CLIENT_ORIGIN , 
-  credentials: true, 
-}));
+const server = http.createServer(app);
+const io = new Server(server, { cors: corsConfig });
 
 app.use(express.json());
+app.use(require("cors")(corsConfig));
+app.use("/folder-structure", FileStructureRouter);
 
-app.get("/", (req, res) => {
-  res.send("🚀 Hello from Express + TypeScript backend!");
-});
+setupSockets(io);
+setupFileWatcher(io);
 
-app.listen(PORT, () => {
-  console.log(`✅ Server is running at http://localhost:${PORT}`);
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+  console.log(`✅ Server live at http://localhost:${PORT}`);
 });

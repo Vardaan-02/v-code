@@ -1,15 +1,13 @@
 import Editor from "@monaco-editor/react";
 import useMonacoLanguages from "@/hooks/useMonocoLanguages";
 import { useEditor } from "@/hooks/useEditor";
-import { useSocket } from "@/hooks/useSockets";
 import { useFileTree } from "@/contexts/file-tree-context";
 import { cn } from "@/lib/utils";
 
 export default function CodeEditor() {
   useMonacoLanguages();
-  const socket = useSocket();
-  const { selectedNode, selectingNode } = useFileTree();
-  const { handleMount, code } = useEditor(socket, selectedNode);
+  const { socketS3, socketDocker, selectedNode, selectingNode } = useFileTree();
+  const { handleMount, code } = useEditor(socketS3, socketDocker, selectedNode);
 
   return (
     <div className="w-full h-full">

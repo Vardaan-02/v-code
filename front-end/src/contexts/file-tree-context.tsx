@@ -7,6 +7,7 @@ import {
   useEffect,
 } from "react";
 import type { FileNode, FileTreeContextType } from "@/types/file-structure";
+import { useSocket } from "@/hooks/useSockets";
 
 const FileTreeContext = createContext<FileTreeContextType | undefined>(
   undefined
@@ -33,6 +34,7 @@ export function FileTreeProvider({
   const [selectedNode, setSelectedNode] = useState<FileNode | null>(null);
   const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set());
   const [selectingNode, setSelectingNode] = useState<boolean>(false);
+  const { socketS3, socketDocker } = useSocket();
 
   useEffect(() => {
     setTree(initialPaths);
@@ -59,6 +61,8 @@ export function FileTreeProvider({
     toggleExpanded,
     selectingNode,
     setSelectingNode,
+    socketS3,
+    socketDocker
   };
 
   return (

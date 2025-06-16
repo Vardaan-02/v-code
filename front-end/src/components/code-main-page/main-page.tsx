@@ -1,4 +1,5 @@
 import Editor from "../editor/editor";
+import Terminal from "../terminal/terminal";
 
 export default function CodeMainPage() {
   return (
@@ -6,7 +7,7 @@ export default function CodeMainPage() {
         <Editor />
       <div className="flex gap-4 w-full h-1/3">
         <div className="aspect-video rounded-xl bg-muted/50 flex items-center justify-center w-2/3">
-          <p className="text-muted-foreground">Treminal</p>
+          <Terminal />
         </div>
         <div className="aspect-video rounded-xl bg-muted/50 flex items-center justify-center w-1/3">
           <p className="text-muted-foreground">Preview</p>

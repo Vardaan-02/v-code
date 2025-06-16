@@ -18,8 +18,18 @@ export default async function deleteS3Object(req: Request, res: Response) {
 
   if (type === "file") {
     const finalPath = `users/${username}/${project_name}/${path}`;
-    
+
+    console.log(finalPath);
+
     try {
+      const head = await s3
+        .headObject({ Bucket: bucket, Key: finalPath })
+        .promise()
+        .catch(() => null);
+      if (!head) {
+        console.warn("⚠️ File not found in S3:", finalPath);
+      }
+
       await s3
         .deleteObject({
           Bucket: bucket,

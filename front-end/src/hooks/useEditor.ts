@@ -6,7 +6,8 @@ import type { FileNode } from "@/types/file-structure";
 import { useFileTree } from "@/contexts/file-tree-context";
 
 export function useEditor(
-  socket: Socket | null,
+  socketS3: Socket | null,
+  socketDocker: Socket | null,
   selectedNode: FileNode | null
 ) {
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
@@ -22,8 +23,15 @@ export function useEditor(
     setIsEditorReady(true);
   }, []);
 
+  // send-delta
   useEffect(() => {
-    if (!socket || !isEditorReady || !editorRef.current || !selectedNode)
+    if (
+      !socketS3 ||
+      !socketDocker ||
+      !isEditorReady ||
+      !editorRef.current ||
+      !selectedNode
+    )
       return;
 
     const model = editorRef.current.getModel();
@@ -36,15 +44,25 @@ export function useEditor(
       }
 
       const changes = event.changes;
-      socket.emit("send-delta", { path: selectedNode?.path, content: changes });
+      socketS3.emit("send-delta", {
+        path: selectedNode?.path,
+        content: changes,
+      });
+      socketDocker.emit("editor:send-delta", {
+        path: selectedNode?.path,
+        content: changes,
+      });
+
       setCode(model.getValue());
     });
 
     return () => disposable.dispose();
-  }, [socket, isEditorReady, selectedNode]);
+  }, [socketS3, socketDocker, isEditorReady, selectedNode]);
 
+  // recieve-delta
   useEffect(() => {
-    if (!socket || !isEditorReady || !editorRef.current) return;
+    if (!socketS3 || !socketDocker || !isEditorReady || !editorRef.current)
+      return;
 
     const model = editorRef.current.getModel();
     if (!model) return;
@@ -53,17 +71,22 @@ export function useEditor(
       isRemoteChange.current = true;
       model.applyEdits(delta);
       setCode(model.getValue());
+      socketDocker.emit("editor:send-delta", {
+        path: selectedNode?.path,
+        content: delta,
+      });
     };
 
-    socket.on("receive-delta", handleReceiveDelta);
+    socketS3.on("receive-delta", handleReceiveDelta);
 
     return () => {
-      socket.off("receive-delta", handleReceiveDelta);
+      socketS3.off("receive-delta", handleReceiveDelta);
     };
-  }, [socket, isEditorReady]);
+  }, [socketS3, socketDocker, isEditorReady, selectedNode]);
 
+  // load-file
   useEffect(() => {
-    if (!socket || !selectedNode || !editorRef.current) return;
+    if (!socketS3 || !selectedNode || !editorRef.current) return;
 
     if (selectedNode.type === "folder") return;
 
@@ -81,26 +104,27 @@ export function useEditor(
       setSelectingNode(false);
     };
 
-    socket.once("load-file", handleLoadFile);
-    socket.emit("get-file", selectedNode.path);
+    socketS3.once("load-file", handleLoadFile);
+    socketS3.emit("get-file", selectedNode.path);
 
     return () => {
       isMounted = false;
-      socket.off("load-file", handleLoadFile);
+      socketS3.off("load-file", handleLoadFile);
     };
-  }, [socket, selectedNode, isEditorReady, setSelectingNode]);
+  }, [socketS3, selectedNode, isEditorReady, setSelectingNode]);
 
   useEffect(() => {
     latestCodeRef.current = code;
   }, [code]);
 
+  // save-file
   useEffect(() => {
-    if (!socket || !selectedNode) return;
+    if (!socketS3 || !selectedNode) return;
 
     if (selectedNode.type === "folder") return;
 
     const interval = setInterval(() => {
-      socket.emit("save-file", {
+      socketS3.emit("save-file", {
         path: selectedNode?.path,
         content: latestCodeRef.current,
       });
@@ -109,7 +133,7 @@ export function useEditor(
     return () => {
       clearInterval(interval);
     };
-  }, [socket, selectedNode]);
+  }, [socketS3, selectedNode]);
 
   return { handleMount, code, setCode, editorRef };
 }

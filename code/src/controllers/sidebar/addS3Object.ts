@@ -16,6 +16,8 @@ export default async function addS3Object(req: Request, res: Response) {
 
   const key = type === "folder" ? finalPath.replace(/\/?$/, "/") : finalPath;
 
+  console.log("add :", key);
+
   const params: AWS.S3.PutObjectRequest = {
     Bucket: process.env.AWS_BUCKET_NAME!,
     Key: key,
