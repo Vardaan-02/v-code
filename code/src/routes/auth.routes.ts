@@ -1,5 +1,4 @@
 import { Router } from "express";
-import { register } from "../controllers/auth/register.controller";
 import { login } from "../controllers/auth/login.controller";
 import { logout } from "../controllers/auth/logout.controller";
 import { getMe } from "../controllers/auth/me.controller";
@@ -9,6 +8,7 @@ import { changePassword } from "../controllers/auth/change-password.controller";
 import { oauthHandler } from "../controllers/auth/oauth.controller";
 import { verifyEmail } from "../controllers/auth/verify-email.controller";
 import { authenticate } from "../middelware/auth.middleware";
+import { register } from "../controllers/auth/register.controller";
 
 const router = Router();
 

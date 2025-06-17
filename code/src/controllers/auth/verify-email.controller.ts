@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import { eq } from "drizzle-orm";
 import { usersTable } from "../../db/schema";
 import db from "../../db";
+import { s3 } from "../../lib/s3-service"; 
 
 export const verifyEmail = async (
   req: Request,
@@ -36,10 +37,22 @@ export const verifyEmail = async (
       return;
     }
 
-    await db
-      .update(usersTable)
-      .set({ is_verified: true })
-      .where(eq(usersTable.id, decoded.userId));
+    const { username, is_verified } = user[0];
+
+    if (!is_verified) {
+      await db
+        .update(usersTable)
+        .set({ is_verified: true })
+        .where(eq(usersTable.id, decoded.userId));
+    }
+
+    const s3Params = {
+      Bucket: process.env.AWS_BUCKET_NAME!,
+      Key: `users/${username}/VCode/`, 
+      Body: "", 
+    };
+
+    await s3.putObject(s3Params).promise();
 
     res.status(200).json({ message: "Email successfully verified" });
     return;

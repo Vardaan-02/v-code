@@ -7,8 +7,10 @@ import { S3Object } from "../../types/s3object";
 dotenv.config();
 
 export default async function getFolderStructureTree(req: Request, res: Response) {
+  const {username} = req.body;
+
   const bucket = process.env.AWS_BUCKET_NAME!;
-  const prefix = "users/Vardaan02/VCode";
+  const prefix = `users/${username}/VCode`;
 
   try {
     const data = await s3

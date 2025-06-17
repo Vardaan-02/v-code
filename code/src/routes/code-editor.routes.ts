@@ -1,14 +1,15 @@
 import express from "express";
-import getData from "../controllers/code-editor/get-file";
-import editFileData from "../controllers/code-editor/edit-file";
 import { copyCodeToLocal } from "../controllers/code-editor/copy-code-to-local";
+import { saveFile } from "../controllers/code-editor/save-file";
+import { loadFile } from "../controllers/code-editor/load-file";
+import { authenticate } from "../middelware/auth.middleware";
 
 const router = express.Router();
 
-router.get("/get-file-data", getData);
+router.post("/load-file", authenticate, loadFile);
 
-router.post("/edit-file-data", editFileData);
+router.post("/save-file", authenticate, saveFile);
 
-router.get("/copy-code",copyCodeToLocal);
+router.get("/copy-code", copyCodeToLocal);
 
 export default router;

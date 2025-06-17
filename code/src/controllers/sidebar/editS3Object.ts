@@ -8,13 +8,13 @@ dotenv.config();
 interface RenameS3ObjectPayload {
   name: string;
   path: string;
+  username: string;
 }
 
 export default async function editS3Object(req: Request, res: Response) {
-  const { username } = user;
   const { name: project_name } = project;
   const bucket = process.env.AWS_BUCKET_NAME!;
-  const { name, path }: RenameS3ObjectPayload = req.body;
+  const { name, path, username }: RenameS3ObjectPayload = req.body;
 
   if (!name || !path) {
     res.status(400).json({ message: "Missing name or path in request body" });
@@ -49,7 +49,6 @@ export default async function editS3Object(req: Request, res: Response) {
     });
     return;
   } catch (err) {
-    console.log("path : " + finalPath,"newPath : " + newKey);
     console.error("S3 Rename Error:", err);
     res.status(500).json({ message: "Failed to rename file", error: err });
     return;

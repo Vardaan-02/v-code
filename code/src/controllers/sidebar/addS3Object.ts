@@ -1,11 +1,10 @@
 import { Request, Response } from "express";
 import { s3 } from "../../lib/s3-service";
-import { user, project } from "../../dummy-data";
+import {  project } from "../../dummy-data";
 
 export default async function addS3Object(req: Request, res: Response) {
-  const { username } = user;
   const { name } = project;
-  const { path, type, content } = req.body;
+  const { path, type, content, username } = req.body;
 
   if (!path || !type) {
     res.status(400).json({ message: "Path and type are required." });
@@ -15,12 +14,10 @@ export default async function addS3Object(req: Request, res: Response) {
   const finalPath = `users/${username}/${name}/${path}`;
   const key = type === "folder" ? finalPath.replace(/\/?$/, "/") : finalPath;
 
-  console.log("add:", key);
-
   const params: AWS.S3.PutObjectRequest = {
     Bucket: process.env.AWS_BUCKET_NAME!,
     Key: key,
-    Body: type === "file" ? content || "" : "", 
+    Body: type === "file" ? content || "" : "",
   };
 
   s3.putObject(params, (err, data) => {
@@ -33,7 +30,6 @@ export default async function addS3Object(req: Request, res: Response) {
     res.status(200).json({
       message: `${type} created successfully ✅`,
       key,
-      data,
     });
     return;
   });

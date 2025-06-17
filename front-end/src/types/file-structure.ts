@@ -23,6 +23,10 @@ export interface FileTreeContextType {
   toggleExpanded: (nodeId: string) => void;
   selectingNode: boolean;
   setSelectingNode: (value: boolean) => void;
+  code: string;
+  setCode: (value: string) => void;
+  language: string;
+  setLanguage: (value: string) => void;
   socketS3: Socket | null;
   socketDocker: Socket | null;
 }

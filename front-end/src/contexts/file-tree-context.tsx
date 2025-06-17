@@ -34,7 +34,12 @@ export function FileTreeProvider({
   const [selectedNode, setSelectedNode] = useState<FileNode | null>(null);
   const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set());
   const [selectingNode, setSelectingNode] = useState<boolean>(false);
+  
   const { socketS3, socketDocker } = useSocket();
+  
+  const [code, setCode] = useState("");
+  const [language,setLanguage] = useState("javascript");
+
 
   useEffect(() => {
     setTree(initialPaths);
@@ -61,8 +66,12 @@ export function FileTreeProvider({
     toggleExpanded,
     selectingNode,
     setSelectingNode,
+    code,
+    setCode,
+    language,
+    setLanguage,
     socketS3,
-    socketDocker
+    socketDocker,
   };
 
   return (

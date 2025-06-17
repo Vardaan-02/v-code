@@ -2,6 +2,7 @@ import type { Socket } from "socket.io-client";
 import { Terminal as XTerminal } from "@xterm/xterm";
 import { useEffect, useRef } from "react";
 import { useAddS3Object, useDeleteS3Object } from "./useS3Object";
+import { saveFile } from "@/api/file-system/save-file";
 
 export function useTerminal(
   socketS3: Socket | null,
@@ -54,15 +55,14 @@ export function useTerminal(
     const addFileFolder = async ({
       path,
       type,
-      content
+      content,
     }: {
       path: string;
       type: "file" | "folder";
-      content:string;
+      content: string;
     }) => {
       const finalpath = path.replace(/^.*s3-code\//, "");
-      console.log(content);
-      await addS3Object({ path: finalpath, type,content });
+      await addS3Object({ path: finalpath, type, content });
     };
 
     socketDocker.on("docker:add", addFileFolder);
@@ -83,9 +83,7 @@ export function useTerminal(
       path: string;
       type: "file" | "folder";
     }) => {
-      console.log(path);
       const finalpath = path.replace(/^.*s3-code\//, "");
-      console.log(finalpath, type);
       await deleteS3Object({ path: finalpath, type });
     };
 
@@ -95,6 +93,27 @@ export function useTerminal(
       socketDocker.off("docker:remove", deleteFileFolder);
     };
   });
+
+  useEffect(() => {
+  if (!socketDocker || !socketS3) return;
+
+  const updateFile = async ({
+    path,
+    content,
+  }: {
+    path: string;
+    content: string;
+  }) => {
+    const finalpath = path.replace(/^.*s3-code\//, "");
+    await saveFile({ path: finalpath, content });
+  };
+
+  socketDocker.on("docker:update", updateFile);
+
+  return () => {
+    socketDocker.off("docker:update", updateFile);
+  };
+}, [socketDocker, socketS3]);
 
   return terminalRef;
 }

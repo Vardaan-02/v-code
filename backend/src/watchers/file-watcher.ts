@@ -2,6 +2,7 @@ import chokidar from "chokidar";
 import { Server } from "socket.io";
 import fs from "fs/promises";
 import path from "path";
+import { getFileContent } from "../utils/in-memory-map";
 
 function shouldIgnore(p: string): boolean {
   return IGNORED_DIRS.some(
@@ -88,6 +89,27 @@ export function setupFileWatcher(io: Server) {
         path: folderPath,
         type: "folder",
       });
+    })
+    .on("change", async (filePath) => {
+      if (shouldIgnore(filePath)) return;
+
+      const contentFromDisk = await fs.readFile(filePath, "utf-8");
+      const contentFromMemory = getFileContent(filePath);
+
+      if (contentFromMemory === contentFromDisk) {
+        return;
+      }
+
+      try {
+        const content = await fs.readFile(filePath, "utf-8");
+        io.emit("docker:update", {
+          path: filePath,
+          type: "file",
+          content:contentFromDisk,
+        });
+      } catch (err) {
+        console.error(`❌ Error reading updated file ${filePath}:`, err);
+      }
     });
 }
 

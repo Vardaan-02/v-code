@@ -3,15 +3,21 @@ import useMonacoLanguages from "@/hooks/useMonocoLanguages";
 import { useEditor } from "@/hooks/useEditor";
 import { useFileTree } from "@/contexts/file-tree-context";
 import { cn } from "@/lib/utils";
+import { useEffect } from "react";
 
 export default function CodeEditor() {
   useMonacoLanguages();
-  const { socketS3, socketDocker, selectedNode, selectingNode } = useFileTree();
+  const { socketS3, socketDocker, selectedNode, selectingNode, language } =
+    useFileTree();
   const { handleMount, code } = useEditor(socketS3, socketDocker, selectedNode);
+
+  useEffect(() => {
+    console.log(language);
+  }, [language]);
 
   return (
     <div className="w-full h-full">
-      <div className="h-full w-full rounded-xl overflow-hidden shadow-lg">
+      <div className="h-full w-full rounded-xl shadow-lg">
         {selectedNode == null || selectedNode?.type === "folder" ? (
           <div className="bg-[#1e1e1e] h-full flex flex-col items-center justify-center text-white px-4 text-center">
             <h2 className="text-xl font-semibold mb-2">No file selected 🗂️</h2>
@@ -39,24 +45,24 @@ export default function CodeEditor() {
               </div>
             </div>
 
-            <div className="h-full">
-              <Editor
-                width="100%"
-                height="100%"
-                language="javascript"
-                theme="vs-dark"
-                value={code}
-                onMount={handleMount}
-                options={{
-                  fontSize: 14,
-                  minimap: { enabled: false },
-                  wordWrap: "on",
-                  scrollBeyondLastLine: false,
-                  automaticLayout: true,
-                  tabSize: 4,
-                }}
-              />
-            </div>
+            {/* <div className="h-full"> */}
+            <Editor
+              width="100%"
+              height="100%"
+              language={language}
+              theme="vs-dark"
+              value={code}
+              onMount={handleMount}
+              options={{
+                fontSize: 14,
+                minimap: { enabled: false },
+                wordWrap: "on",
+                scrollBeyondLastLine: false,
+                automaticLayout: true,
+                tabSize: 4,
+              }}
+            />
+            {/* </div> */}
           </div>
         )}
       </div>

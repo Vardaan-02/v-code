@@ -46,6 +46,8 @@ import {
   useDeleteS3Object,
   useRenameS3Object,
 } from "@/hooks/useS3Object";
+import { useLoadFile, useSaveFile, useSyncFile } from "@/hooks/useFileSystem";
+import { getLanguageFromPath } from "@/utils/language-getter";
 
 interface FileTreeNodeProps {
   node: FileNode;
@@ -53,8 +55,15 @@ interface FileTreeNodeProps {
 }
 
 export function FileTreeNode({ node, level }: FileTreeNodeProps) {
-  const { selectedNode, setSelectedNode, expandedNodes, toggleExpanded } =
-    useFileTree();
+  const {
+    selectedNode,
+    setSelectedNode,
+    expandedNodes,
+    toggleExpanded,
+    code,
+    setCode,
+    setLanguage
+  } = useFileTree();
 
   const [isRenaming, setIsRenaming] = useState(false);
   const [renameValue, setRenameValue] = useState(node.name);
@@ -67,9 +76,13 @@ export function FileTreeNode({ node, level }: FileTreeNodeProps) {
   const isSelected = selectedNode?.path === node.path;
   const hasChildren = node.children && node.children.length > 0;
 
-  const { mutateAsync: addS3Object, isPending: addingS3Object } = useAddS3Object();
+  const { mutateAsync: addS3Object, isPending: addingS3Object } =
+    useAddS3Object();
   const { mutateAsync: renameS3Object } = useRenameS3Object();
   const { mutateAsync: deleteS3Object } = useDeleteS3Object();
+  const { mutateAsync: saveFile } = useSaveFile();
+  const { mutateAsync: loadFile } = useLoadFile();
+  const { mutateAsync: syncFile } = useSyncFile();
 
   const handleToggleExpand = () => {
     if (node.type === "folder") {
@@ -77,7 +90,16 @@ export function FileTreeNode({ node, level }: FileTreeNodeProps) {
     }
   };
 
-  const handleSelect = () => {
+  const handleSelect = async () => {
+    if (selectedNode && selectedNode.type === "file") {
+      await saveFile({ path: selectedNode!.path, content: code });
+    }
+    if (node.type === "file") {
+      const content = await loadFile({ path: node.path });
+      await syncFile({ path: node.path, content: content });
+      setCode(content);
+      setLanguage(getLanguageFromPath(node.path));
+    }
     setSelectedNode(node);
   };
 

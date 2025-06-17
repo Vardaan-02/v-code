@@ -3,8 +3,6 @@ import type { LoginFormValues } from "@/types/auth";
 
 export const login = async (payload: LoginFormValues) => {
   try {
-    console.log(payload);
-
     const response = await axiosBackendClient.post("/auth/login", payload);
 
     return response.data;
