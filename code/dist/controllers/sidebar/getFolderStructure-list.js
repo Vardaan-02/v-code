@@ -8,8 +8,9 @@ const s3_service_1 = require("../../lib/s3-service");
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 async function getFolderStructureList(req, res) {
+    const { username } = req.body;
     const bucket = process.env.AWS_BUCKET_NAME;
-    const prefix = "users/Vardaan02/VCode";
+    const prefix = `users/${username}/VCode`;
     try {
         const data = await s3_service_1.s3
             .listObjectsV2({
@@ -22,7 +23,7 @@ async function getFolderStructureList(req, res) {
             res.json([]);
             return;
         }
-        const final = contents.map(obj => {
+        const final = contents.map((obj) => {
             const parts = obj.Key.split("/").slice(3);
             return {
                 key: parts.join("/"),

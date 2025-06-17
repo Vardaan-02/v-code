@@ -7,12 +7,14 @@ exports.editorSocketHandler = editorSocketHandler;
 const apply_delta_1 = require("../utils/apply-delta");
 const promises_1 = require("fs/promises");
 const path_1 = __importDefault(require("path"));
+const in_memory_map_1 = require("../utils/in-memory-map");
 function editorSocketHandler(socket) {
     socket.on("editor:send-delta", async ({ path: filePath, content }) => {
         const finalPath = path_1.default.join(process.env.ACTUAL_PATH, filePath);
         try {
             const original = await (0, promises_1.readFile)(finalPath, "utf-8");
             const updated = (0, apply_delta_1.applyDelta)(original, content);
+            (0, in_memory_map_1.applyDeltaToFile)(finalPath, content[0]);
             await (0, promises_1.writeFile)(finalPath, updated, "utf-8");
         }
         catch (err) {

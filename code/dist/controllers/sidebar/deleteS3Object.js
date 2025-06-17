@@ -9,17 +9,15 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const dummy_data_1 = require("../../dummy-data");
 dotenv_1.default.config();
 async function deleteS3Object(req, res) {
-    const { username } = dummy_data_1.user;
     const { name: project_name } = dummy_data_1.project;
     const bucket = process.env.AWS_BUCKET_NAME;
-    const { path, type } = req.body;
+    const { path, type, username } = req.body;
     if (!path) {
         res.status(400).json({ message: "Missing name or path in request body" });
         return;
     }
     if (type === "file") {
         const finalPath = `users/${username}/${project_name}/${path}`;
-        console.log(finalPath);
         try {
             const head = await s3_service_1.s3
                 .headObject({ Bucket: bucket, Key: finalPath })
@@ -41,7 +39,6 @@ async function deleteS3Object(req, res) {
             return;
         }
         catch (err) {
-            console.log("path : " + finalPath);
             console.error("S3 Rename Error:", err);
             res.status(500).json({ message: "Failed to rename file", error: err });
             return;

@@ -9,10 +9,9 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const dummy_data_1 = require("../../dummy-data");
 dotenv_1.default.config();
 async function editS3Object(req, res) {
-    const { username } = dummy_data_1.user;
     const { name: project_name } = dummy_data_1.project;
     const bucket = process.env.AWS_BUCKET_NAME;
-    const { name, path } = req.body;
+    const { name, path, username } = req.body;
     if (!name || !path) {
         res.status(400).json({ message: "Missing name or path in request body" });
         return;
@@ -42,7 +41,6 @@ async function editS3Object(req, res) {
         return;
     }
     catch (err) {
-        console.log("path : " + finalPath, "newPath : " + newKey);
         console.error("S3 Rename Error:", err);
         res.status(500).json({ message: "Failed to rename file", error: err });
         return;

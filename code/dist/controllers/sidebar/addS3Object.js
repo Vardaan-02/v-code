@@ -4,16 +4,14 @@ exports.default = addS3Object;
 const s3_service_1 = require("../../lib/s3-service");
 const dummy_data_1 = require("../../dummy-data");
 async function addS3Object(req, res) {
-    const { username } = dummy_data_1.user;
     const { name } = dummy_data_1.project;
-    const { path, type, content } = req.body;
+    const { path, type, content, username } = req.body;
     if (!path || !type) {
         res.status(400).json({ message: "Path and type are required." });
         return;
     }
     const finalPath = `users/${username}/${name}/${path}`;
     const key = type === "folder" ? finalPath.replace(/\/?$/, "/") : finalPath;
-    console.log("add:", key);
     const params = {
         Bucket: process.env.AWS_BUCKET_NAME,
         Key: key,
@@ -28,7 +26,6 @@ async function addS3Object(req, res) {
         res.status(200).json({
             message: `${type} created successfully ✅`,
             key,
-            data,
         });
         return;
     });

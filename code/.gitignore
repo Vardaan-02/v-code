@@ -44,3 +44,6 @@ drizzle/
 
 # But keep the actual migration SQLs
 !drizzle/*.sql
+
+#build 
+/dist

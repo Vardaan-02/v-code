@@ -9,8 +9,9 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const tree_folder_1 = require("../../lib/tree-folder");
 dotenv_1.default.config();
 async function getFolderStructureTree(req, res) {
+    const { username } = req.body;
     const bucket = process.env.AWS_BUCKET_NAME;
-    const prefix = "users/Vardaan02/VCode";
+    const prefix = `users/${username}/VCode`;
     try {
         const data = await s3_service_1.s3
             .listObjectsV2({

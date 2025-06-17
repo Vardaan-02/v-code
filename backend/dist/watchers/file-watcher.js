@@ -7,6 +7,7 @@ exports.setupFileWatcher = setupFileWatcher;
 const chokidar_1 = __importDefault(require("chokidar"));
 const promises_1 = __importDefault(require("fs/promises"));
 const path_1 = __importDefault(require("path"));
+const in_memory_map_1 = require("../utils/in-memory-map");
 function shouldIgnore(p) {
     return IGNORED_DIRS.some((dir) => p.includes(`/${dir}/`) || p.endsWith(`/${dir}`));
 }
@@ -86,6 +87,26 @@ function setupFileWatcher(io) {
             path: folderPath,
             type: "folder",
         });
+    })
+        .on("change", async (filePath) => {
+        if (shouldIgnore(filePath))
+            return;
+        const contentFromDisk = await promises_1.default.readFile(filePath, "utf-8");
+        const contentFromMemory = (0, in_memory_map_1.getFileContent)(filePath);
+        if (contentFromMemory === contentFromDisk) {
+            return;
+        }
+        try {
+            const content = await promises_1.default.readFile(filePath, "utf-8");
+            io.emit("docker:update", {
+                path: filePath,
+                type: "file",
+                content: contentFromDisk,
+            });
+        }
+        catch (err) {
+            console.error(`❌ Error reading updated file ${filePath}:`, err);
+        }
     });
 }
 const IGNORED_DIRS = [

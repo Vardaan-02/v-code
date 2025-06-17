@@ -9,10 +9,11 @@ const getFolderStructure_tree_1 = __importDefault(require("../controllers/sideba
 const getFolderStructure_list_1 = __importDefault(require("../controllers/sidebar/getFolderStructure-list"));
 const addS3Object_1 = __importDefault(require("../controllers/sidebar/addS3Object"));
 const deleteS3Object_1 = __importDefault(require("../controllers/sidebar/deleteS3Object"));
+const auth_middleware_1 = require("../middelware/auth.middleware");
 const router = express_1.default.Router();
-router.get("/get-folder-structure/tree", getFolderStructure_tree_1.default);
-router.get("/get-folder-structure/list", getFolderStructure_list_1.default);
-router.post("/add-s3-object", addS3Object_1.default);
-router.put("/edit-s3-object", editS3Object_1.default);
-router.put("/delete-s3-object", deleteS3Object_1.default);
+router.get("/get-folder-structure/tree", auth_middleware_1.authenticate, getFolderStructure_tree_1.default);
+router.get("/get-folder-structure/list", auth_middleware_1.authenticate, getFolderStructure_list_1.default);
+router.post("/add-s3-object", auth_middleware_1.authenticate, addS3Object_1.default);
+router.put("/edit-s3-object", auth_middleware_1.authenticate, editS3Object_1.default);
+router.put("/delete-s3-object", auth_middleware_1.authenticate, deleteS3Object_1.default);
 exports.default = router;
