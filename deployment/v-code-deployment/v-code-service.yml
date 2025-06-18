@@ -1,0 +1,12 @@
+# v-code-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: v-code-service
+spec:
+  selector:
+    app: v-code
+  type: LoadBalancer
+  ports:
+    - port: 80
+      targetPort: 3001

@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k8s-backend
+  labels:
+    app: k8s-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: k8s-backend
+  template:
+    metadata:
+      labels:
+        app: k8s-backend
+    spec:
+      containers:
+        - name: backend
+          image: vardaan02/k8s-backend:v3
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: PORT
+              value: "3000"
+            - name: CLIENT_ORIGINS
+              value: "http://localhost:5173,http://localhost:4173"

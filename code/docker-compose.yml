@@ -1,0 +1,49 @@
+version: "3.9"
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: v-code-backend-2
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - AWS_ACCESS_KEY_ID=AKIATHVQLGXBLY6ZJLX5
+      - AWS_SECRET_ACCESS_KEY=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
+      - AWS_BUCKET_NAME=v-code
+      - CLIENT_ORIGIN=https://vcode.vardaan02.in
+      - COPY_DIST=./../../../../s3-code
+      - SMTP_HOST=smtp.gmail.com
+      - SMTP_PORT=587
+      - SMTP_SECURE=false
+      - SMTP_USER=noreplyvardaan@gmail.com
+      - SMTP_PASS=uyie abzo dlce levk
+      - FRONTEND_URL=https://vcode.vardaan02.in
+      - BACKEND_URL=http://api.vardaan02.in
+      - JWT_EMAIL_SECRET=6283087912
+      - JWT_REFRESH_SECRET=7015832983
+      - GOOGLE_CLIENT_ID=your_google_client_id
+      - GOOGLE_CLIENT_SECRET=your_google_client_secret
+      - GITHUB_CLIENT_ID=your_github_client_id
+      - GITHUB_CLIENT_SECRET=your_github_client_secret
+      - DATABASE_URL=postgresql://code_editor_owner:secret123@v-code-db:5432/code_editor
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15
+    container_name: v-code-db
+    restart: always
+    environment:
+      POSTGRES_USER: code_editor_owner
+      POSTGRES_PASSWORD: secret123
+      POSTGRES_DB: code_editor
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

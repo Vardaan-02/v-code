@@ -1,31 +1,22 @@
-# Stage 1: Build with full tooling
-FROM node:20-bookworm AS builder
+FROM node:20-alpine
 
 WORKDIR /app
 
-# Install Python and build tools needed for node-pty
-RUN apt-get update && \
-    apt-get install -y python3 g++ make && \
-    apt-get clean
+# Install runtime dependencies
+RUN apk add --no-cache \
+  bash \
+  python3 \
+  py3-pip \
+  g++ \
+  make \
+  libc6-compat \
+  libstdc++
 
 COPY package*.json ./
-RUN npm install
+RUN npm ci
 
-COPY tsconfig.json ./
-COPY src ./src
-
-RUN npx tsc
-
-# Stage 2: Production image
-FROM node:20-slim AS production
-
-WORKDIR /app
-
-COPY package*.json ./
-RUN apt-get update && apt-get install -y python3 g++ make && npm install --omit=dev && apt-get remove -y python3 g++ make && apt-get clean
-
-COPY --from=builder /app/dist ./dist
+COPY . .
+RUN npm run build
 
 EXPOSE 3000
-
-CMD ["node", "dist/index.js"]
+CMD ["npm", "start"]

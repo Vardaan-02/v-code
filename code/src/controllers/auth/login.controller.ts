@@ -52,15 +52,6 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       { expiresIn: "7d" }
     );
 
-    // 🍪 Set HTTP-only cookie
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // only on HTTPS in prod
-      sameSite: "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-      path: "/", // applies to entire domain
-    });
-
     // ✅ Success response (optional: include user info)
     res.status(200).json({
       message: "Login successful",
@@ -68,6 +59,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
         id: user.id,
         name: user.name,
         email: user.email,
+        refreshToken
       },
     });
   } catch (error) {

@@ -1,0 +1,26 @@
+# Node modules (always ignore local ones)
+node_modules
+
+# Build output (rebuild inside image)
+dist
+
+# Logs
+*.log
+npm-debug.log*
+
+# Env files / credentials
+.env
+*.local
+k8s-credentials.json
+
+# OS cruft
+.DS_Store
+Thumbs.db
+
+# Editor junk
+.vscode
+.idea
+
+# Typescript cache
+*.tsbuildinfo
+

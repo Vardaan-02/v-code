@@ -1,0 +1,20 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: v-code-ingress
+  annotations:
+    kubernetes.io/ingress.class: "gce"
+    networking.gke.io/managed-certificates: v-code-cert
+    kubernetes.io/ingress.global-static-ip-name: v-code-ip
+spec:
+  rules:
+    - host: api.vardaan02.in
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: v-code-service
+                port:
+                  number: 80

@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-{{USERNAME}}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-{{USERNAME}}
+  template:
+    metadata:
+      labels:
+        app: user-{{USERNAME}}
+    spec:
+      volumes:
+        - name: user-code
+          emptyDir: {}
+
+      initContainers:
+        - name: init-s3-fetch
+          image: amazon/aws-cli
+          command: ["sh", "-c"]
+          args:
+            - |
+              set -ex
+              echo "🔥 Starting S3 sync..."
+              mkdir -p /data
+              if aws s3 ls s3://{{S3_PATH}} | grep -q '[0-9]'; then
+                aws s3 cp s3://{{S3_PATH}} /data/ --recursive
+                echo "✅ S3 copy done"
+              else
+                echo "⚠️ No files to copy from S3"
+                exit 0
+              fi
+          env:
+            - name: AWS_ACCESS_KEY_ID
+              value: "AKIATHVQLGXBLY6ZJLX5"
+            - name: AWS_SECRET_ACCESS_KEY
+              value: "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"
+            - name: AWS_DEFAULT_REGION
+              value: ap-south-1
+            - name: USERNAME
+              value: "{{USERNAME}}"
+          volumeMounts:
+            - name: user-code
+              mountPath: /data
+
+      containers:
+        - name: user-container
+          image: vardaan02/docker-backend-per-user:v2
+          ports:
+            - containerPort: 3000
+          volumeMounts:
+            - name: user-code
+              mountPath: /code

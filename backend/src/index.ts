@@ -7,6 +7,7 @@ import { setupSockets } from "./sockets";
 import { setupFileWatcher } from "./watchers/file-watcher";
 
 import FileStructureRouter from "./routes/file-tree";
+import { healthCheck } from "./utils/health-checks";
 
 const app = express();
 const server = http.createServer(app);
@@ -14,6 +15,7 @@ const io = new Server(server, { cors: corsConfig });
 
 app.use(express.json());
 app.use(require("cors")(corsConfig));
+healthCheck(app);
 app.use("/folder-structure", FileStructureRouter);
 
 setupSockets(io);

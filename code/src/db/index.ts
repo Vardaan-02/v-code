@@ -8,10 +8,16 @@ if (!process.env.DATABASE_URL) {
 
 const client = new Client({
   connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false,
+  },
 });
 
-client.connect();
+client.connect().catch((err) => {
+  console.error("❌ PG connection failed:", err.message);
+  process.exit(1);
+});
 
-const db = drizzle(client);
+const db = drizzle(client)!;
 
 export default db;

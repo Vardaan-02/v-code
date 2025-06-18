@@ -9,6 +9,9 @@ const terminal_1 = require("./terminal");
 const pty_1 = __importDefault(require("../pty"));
 function setupSockets(io) {
     const ptyProcess = (0, pty_1.default)();
+    ptyProcess.onExit(({ exitCode, signal }) => {
+        console.log(`PTY exited with code ${exitCode}, signal ${signal}`);
+    });
     io.on("connection", (socket) => {
         console.log(`🟢 Client connected: ${socket.id}`);
         (0, editor_1.editorSocketHandler)(socket);

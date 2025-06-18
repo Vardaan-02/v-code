@@ -6,12 +6,17 @@ import { PORT, CLIENT_ORIGIN } from "./config";
 import routes from "./routes";
 import cookieParser from "cookie-parser";
 import { handleFileSockets } from "./sockets/file-handler";
+import { healthCheck } from "./utils/health-check";
 
 const app = express();
 
+console.log(CLIENT_ORIGIN);
+
 app.use(cors({ origin: CLIENT_ORIGIN, credentials: true }));
+
 app.use(express.json());
 app.use(cookieParser());
+healthCheck(app);
 app.use("/api", routes);
 
 const server = http.createServer(app);
