@@ -18,7 +18,7 @@ services:
     restart: always
     environment:
       POSTGRES_USER: code_editor_owner
-      POSTGRES_PASSWORD: secret123
+      POSTGRES_PASSWORD: 
       POSTGRES_DB: code_editor
     ports:
       - "5432:5432"

@@ -34,9 +34,9 @@ spec:
               fi
           env:
             - name: AWS_ACCESS_KEY_ID
-              value: "AKIATHVQLGXBLY6ZJLX5"
+              value: 
             - name: AWS_SECRET_ACCESS_KEY
-              value: "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"
+              value: 
             - name: AWS_DEFAULT_REGION
               value: ap-south-1
             - name: USERNAME
