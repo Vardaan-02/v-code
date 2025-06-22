@@ -3,14 +3,14 @@ import { useRef, useState } from "react";
 
 export default function Preview() {
   const iframeRef = useRef<HTMLIFrameElement>(null);
-  const [url, setUrl] = useState("https://ui.vardaan02.in");
+  const [url, setUrl] = useState("13.126.181.1");
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       // Optional: add https:// if not present
       let finalUrl = url;
       if (!/^https?:\/\//i.test(url)) {
-        finalUrl = `https://${url}`;
+        finalUrl = `http://${url}`;
         setUrl(finalUrl);
       }
       if (iframeRef.current) {

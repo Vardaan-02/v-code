@@ -6,7 +6,6 @@ export const addS3Object = async (payload: AddS3ObjectPayload) => {
   try {
     const backendResponse = await axiosBackendClient.post("/sidebar/add-s3-object", payload);
     const dockerResponse = await axiosDockerClient.post("/folder-structure/add-file-folder", payload);
-
     return {
       s3: backendResponse.data,
       backend: dockerResponse.data,
